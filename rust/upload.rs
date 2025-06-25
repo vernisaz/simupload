@@ -20,16 +20,16 @@ impl simweb::WebPage for Upload {
                     let mut errors: Option<String> = None;
                     for file in files {
                         let file_path = PathBuf::from(&file);
-                        match fs::rename(file,&dir) {
+                        match fs::rename(&file,&dir) {
                             Ok(()) => (),
                             Err(err) => match errors {
                                 None => {
                                     let mut some_errors = String::new();
-                                    writeln!{&mut some_errors, "{err:?}"}.unwrap();
+                                    writeln!{&mut some_errors, "{file} to {dir} {err:?}"}.unwrap();
                                     errors = Some(some_errors)
                                 }
                                 Some(mut some_errors) => {
-                                    writeln!{&mut some_errors, "{err:?}"}.unwrap();
+                                    writeln!{&mut some_errors, "{file} to {dir} {err:?}"}.unwrap();
                                     errors = Some(some_errors)
                                 }
                             }
