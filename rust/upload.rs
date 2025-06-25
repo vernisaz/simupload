@@ -1,11 +1,10 @@
 extern crate simjson;
 extern crate simweb;
-use std::{io::{self}, fmt::Write, fs, path::PathBuf};
+use std::{io::{self}, fmt::Write, fs, path::PathBuf, ffi::OsStr,};
 use simweb::{WebData,WebPage};
 struct Upload;
 
 fn main() -> io::Result<()> {
-
     Ok(Upload{}.show())
 }
 
@@ -20,7 +19,9 @@ impl simweb::WebPage for Upload {
                     let mut errors: Option<String> = None;
                     for file in files {
                         let file_path = PathBuf::from(&file);
-                        match fs::rename(&file,&dir) {
+                        let mut dest = PathBuf::from(&dir);
+                        dest.push(file_path.file_name().unwrap_or(OsStr::new("")));
+                        match fs::rename(&file,&dest) {
                             Ok(()) => (),
                             Err(err) => match errors {
                                 None => {
