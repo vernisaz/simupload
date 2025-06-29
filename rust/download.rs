@@ -7,7 +7,8 @@ fn main() -> io::Result<()> {
         Err(_) => err_out("no path"),
         Ok(path) => {
             let data = simweb::WebData::new();
-            let path = data.url_comp_decode(&path);
+            let path = &data.url_comp_decode(&path)[1..];
+           // let path 
             let path_buf = PathBuf::from(path);
             if path_buf.exists() && path_buf.is_file() {
                 let md = path_buf.metadata().unwrap();
