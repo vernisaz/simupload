@@ -1,3 +1,4 @@
+extern crate simweb;
 use std::{io::{self,prelude::*,BufReader},
     fs::File, path::PathBuf, };
 
@@ -5,6 +6,8 @@ fn main() -> io::Result<()> {
     match std::env::var("PATH_INFO") {
         Err(_) => err_out("no path"),
         Ok(path) => {
+            let data = simweb::WebData::new();
+            let path = data.url_comp_decode(&path);
             let path_buf = PathBuf::from(path);
             if path_buf.exists() && path_buf.is_file() {
                 let md = path_buf.metadata().unwrap();
@@ -24,6 +27,8 @@ fn main() -> io::Result<()> {
                     stdout.write_all(&buffer[0..read_count])?; // Writes the entire buffer to stdout.
                 }
                 stdout.flush()?; 
+            } else {
+                eprintln!("downloading {path_buf:?} non existen");
             }
         }
     }
