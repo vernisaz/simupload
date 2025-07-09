@@ -1,6 +1,6 @@
 extern crate simjson;
 extern crate simweb;
-use std::{io::{self}, fmt::Write, fs, path::PathBuf, ffi::OsStr,};
+use std::{io::{self,ErrorKind}, fmt::Write, fs, path::{PathBuf,Path}, ffi::OsStr,};
 use simweb::{WebData,WebPage};
 struct Upload;
 
@@ -24,7 +24,7 @@ impl simweb::WebPage for Upload {
                         match fs::rename(&file,&dest) {
                             Ok(()) => (),
                             Err(mut err) => {
-                                if err.kind == ErrorKind:: CrossesDevices {
+                                if err.kind() == ErrorKind:: CrossesDevices {
                                     match move_file_cross_filesystem(&file,&dest) {
                                         Ok(()) => continue,
                                         Err(copy_err) => err = copy_err,
@@ -96,7 +96,9 @@ fn print_params(accumulation: &mut String, name: &str, val: Option<Vec<String>>)
 }
 
 // AI generated
-fn move_file_cross_filesystem(source_path: &Path, destination_path: &Path) -> io::Result<()> {
+fn move_file_cross_filesystem(source_path: impl AsRef<str>, destination_path: impl AsRef<Path>) -> io::Result<()> {
+    let source_path = source_path.as_ref();
+    let destination_path = destination_path.as_ref();
     // 1. Copy the file
     fs::copy(source_path, destination_path)?;
     eprintln!("File copied from {:?} to {:?}", source_path, destination_path);
