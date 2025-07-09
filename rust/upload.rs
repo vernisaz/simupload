@@ -23,15 +23,23 @@ impl simweb::WebPage for Upload {
                         dest.push(file_path.file_name().unwrap_or(OsStr::new("")));
                         match fs::rename(&file,&dest) {
                             Ok(()) => (),
-                            Err(err) => match errors {
-                                None => {
-                                    let mut some_errors = String::new();
-                                    writeln!{&mut some_errors, "{file} to {dir} {err:?}"}.unwrap();
-                                    errors = Some(some_errors)
+                            Err(mut err) => {
+                                if err.kind == ErrorKind:: CrossesDevices {
+                                    match move_file_cross_filesystem(&file,&dest) {
+                                        Ok(()) => continue,
+                                        Err(copy_err) => err = copy_err,
+                                    }
                                 }
-                                Some(mut some_errors) => {
-                                    writeln!{&mut some_errors, "{file} to {dir} {err:?}"}.unwrap();
-                                    errors = Some(some_errors)
+                                match errors {
+                                    None => {
+                                        let mut some_errors = String::new();
+                                        writeln!{&mut some_errors, "{file} to {dir} {err:?}"}.unwrap();
+                                        errors = Some(some_errors)
+                                    }
+                                    Some(mut some_errors) => {
+                                        writeln!{&mut some_errors, "{file} to {dir} {err:?}"}.unwrap();
+                                        errors = Some(some_errors)
+                                    }
                                 }
                             }
                         }
@@ -85,4 +93,17 @@ fn print_param( accumulation: &mut String, name: &str, val: Option<String>) -> R
 
 fn print_params(accumulation: &mut String, name: &str, val: Option<Vec<String>>) -> Result<(), std::fmt::Error> {
     write!{accumulation, "<div> parameter <b>{name}</b> of <i>{val:?}</i></div>"}
+}
+
+// AI generated
+fn move_file_cross_filesystem(source_path: &Path, destination_path: &Path) -> io::Result<()> {
+    // 1. Copy the file
+    fs::copy(source_path, destination_path)?;
+    eprintln!("File copied from {:?} to {:?}", source_path, destination_path);
+
+    // 2. Delete the original file
+    fs::remove_file(source_path)?;
+    eprintln!("Original file deleted at {:?}", source_path);
+
+    Ok(())
 }
