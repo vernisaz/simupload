@@ -14,10 +14,14 @@ fn main() -> io::Result<()> {
                 let md = path_buf.metadata().unwrap();
                 let len = md.len();
                 let name = path_buf.file_name().unwrap().display();
-                print!("Content-Length: {len}\r\nContent-Type: application/octet-stream\r\nContent-Disposition: attachment; filename=\"{name}\"\r\n\r\n");
-                let file = File::open(path_buf)?;
+                let ext = path_buf.extension().unwrap().display();
+                let file = File::open(&path_buf)?;
+                match std::env::var("show") {
+                    Ok(show_type) if show_type == "image" => print!("Content-Length: {len}\r\nContent-Type: image/{ext}-stream\r\n\r\n"),
+                    _  => print!("Content-Length: {len}\r\nContent-Type: application/octet-stream\r\nContent-Disposition: attachment; filename=\"{name}\"\r\n\r\n"),
+                };
                 let mut reader = BufReader::new(file);
-                const BUFFER_LEN: usize = 4096;
+                const BUFFER_LEN: usize = 16384;
                 let mut buffer = [0u8; BUFFER_LEN];
                 let mut stdout = io::stdout();
                 loop {
@@ -38,6 +42,6 @@ fn main() -> io::Result<()> {
 
 fn err_out(err: &str) {
     print!{ "Status: {} Internal Server Error\r\n", 500 }
-    print!("Content-Length: {}\r\n", err.len());
+    print!("Content-Length: {}\r\n", err.len()); // server will recalculate it anyway
     print! {"Content-type: text/plain\r\n\r\n{err}"}
 }
