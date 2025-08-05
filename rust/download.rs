@@ -16,8 +16,8 @@ fn main() -> io::Result<()> {
                 let name = path_buf.file_name().unwrap().display();
                 let ext = path_buf.extension().unwrap().display();
                 let file = File::open(&path_buf)?;
-                match std::env::var("show") {
-                    Ok(show_type) if show_type == "image" => print!("Content-Length: {len}\r\nContent-Type: image/{ext}-stream\r\n\r\n"),
+                match data.param("show") {
+                    Some(show_type) if show_type == "image" => print!("Content-Length: {len}\r\nContent-Type: image/{ext}-stream\r\n\r\n"),
                     _  => print!("Content-Length: {len}\r\nContent-Type: application/octet-stream\r\nContent-Disposition: attachment; filename=\"{name}\"\r\n\r\n"),
                 };
                 let mut reader = BufReader::new(file);
