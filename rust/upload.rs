@@ -1,7 +1,7 @@
 extern crate simjson;
 extern crate simweb;
 use std::{io::{self,ErrorKind}, fmt::Write, fs, path::{PathBuf,Path}, ffi::OsStr,};
-use simweb::{WebData,WebPage};
+use simweb::{WebData,WebPage,WebError};
 struct Upload;
 
 fn main() -> io::Result<()> {
@@ -9,12 +9,12 @@ fn main() -> io::Result<()> {
 }
 
 impl simweb::WebPage for Upload {
-    fn main_load(&self) -> Result<String, String> {
+    fn main_load(&self) -> Result<String, Box<dyn std::error::Error + 'static>> {
         let data = WebData::new();
         if data.param("dir").is_some() {
             let dir = data.param("dir").unwrap();
             match data.params("upFile") {
-                None => Err("Err: no files".to_string()),
+                None => Err(Box::new(WebError {reason:"Err: no files".to_string(), cause:None})),
                 Some(files) => {
                     let mut errors: Option<String> = None;
                     for file in files {
