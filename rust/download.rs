@@ -1,6 +1,9 @@
 extern crate simweb;
-use std::{io::{self,prelude::*,BufReader},
-    fs::File, path::PathBuf, };
+use std::{
+    fs::File,
+    io::{self, prelude::*, BufReader},
+    path::PathBuf,
+};
 
 fn main() -> io::Result<()> {
     match std::env::var("PATH_INFO") {
@@ -8,7 +11,7 @@ fn main() -> io::Result<()> {
         Ok(path) => {
             let data = simweb::WebData::new();
             let path = &data.url_comp_decode(&path)[1..];
-           // let path 
+            // let path
             let path_buf = PathBuf::from(path);
             if path_buf.exists() && path_buf.is_file() {
                 let md = path_buf.metadata().unwrap();
@@ -31,7 +34,7 @@ fn main() -> io::Result<()> {
                     }
                     stdout.write_all(&buffer[0..read_count])?; // Writes the entire buffer to stdout.
                 }
-                stdout.flush()?; 
+                stdout.flush()?;
             } else {
                 eprintln!("downloading {path_buf:?} non existen");
             }
@@ -41,7 +44,7 @@ fn main() -> io::Result<()> {
 }
 
 fn err_out(err: &str) {
-    print!{ "Status: {} Internal Server Error\r\n", 500 }
+    print! { "Status: {} Internal Server Error\r\n", 500 }
     print!("Content-Length: {}\r\n", err.len()); // server will recalculate it anyway
     print! {"Content-type: text/plain\r\n\r\n{err}"}
 }
