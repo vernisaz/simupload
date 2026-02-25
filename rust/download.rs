@@ -1,11 +1,12 @@
 extern crate simweb;
 use std::{
+    error::Error,
     fs::File,
     io::{self, prelude::*, BufReader},
     path::PathBuf,
 };
 
-fn main() -> io::Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     match std::env::var("PATH_INFO") {
         Err(_) => err_out("no path"),
         Ok(path) => {
@@ -14,10 +15,10 @@ fn main() -> io::Result<()> {
             // let path
             let path_buf = PathBuf::from(path);
             if path_buf.exists() && path_buf.is_file() {
-                let md = path_buf.metadata().unwrap();
+                let md = path_buf.metadata()?;
                 let len = md.len();
-                let name = path_buf.file_name().unwrap().display();
-                let ext = path_buf.extension().unwrap().display();
+                let name = path_buf.file_name().ok_or("no file name")?.display();
+                let ext = path_buf.extension().ok_or("no file extension")?.display();
                 let file = File::open(&path_buf)?;
                 match data.param("show") {
                     Some(show_type) if show_type == "image" => print!("Content-Length: {len}\r\nContent-Type: image/{ext}\r\n\r\n"),
