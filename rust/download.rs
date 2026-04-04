@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let data = simweb::WebData::new();
             
             let Some(path) = data.url_comp_decode(&path) else {
-                err_out("invalid path info (decoding failed)");
+                err_out("invalid path info (URL decoding failed)");
                 return Ok(())
             };
             let path = &path[1..];
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
                 stdout.flush()?;
             } else {
-                eprintln!("downloading {path_buf:?} non existen");
+                err_out("downloading {path_buf:?} non existen");
             }
         }
     }
