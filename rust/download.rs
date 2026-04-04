@@ -11,7 +11,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         Err(_) => err_out("no path"),
         Ok(path) => {
             let data = simweb::WebData::new();
-            let path = &data.url_comp_decode(&path)[1..];
+            
+            let Some(path) = data.url_comp_decode(&path) else {
+                err_out("invalid path info (decoding failed)");
+                return Ok(())
+            };
+            let path = &path[1..];
             // let path
             let path_buf = PathBuf::from(path);
             if path_buf.exists() && path_buf.is_file() {
