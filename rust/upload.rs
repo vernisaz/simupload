@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
 }
 
 impl simweb::WebPage for Upload {
-    fn main_load(&self) -> Result<String, Box<dyn std::error::Error + 'static>> {
+    fn main_load(&self) -> Result<String, Box<dyn std::error::Error>> {
         let data = WebData::new();
         if let Some(dir) = data.param("dir") {
             match data.params("upFile") {
