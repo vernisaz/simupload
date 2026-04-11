@@ -60,7 +60,7 @@
                 </menuitem>
             </menu>
         </nav>
-     <form name="attach" method="POST" action="/upload/simupld" id="attach" enctype="multipart/form-data">
+     <form name="attach" method="POST" action="/cmd/upload/simupld" id="attach" enctype="multipart/form-data">
        <div><input type="file" name="browsefile" accept=".docx,.pdf,.doc,.txt,.rtf,image/*" onchange="notifyAndSubmit()"></div>
        <div><textarea name="somedata" rows="5" cols="65"></textarea></div>
        <div><input type="hidden" name="name" value="@name@"></div>
@@ -70,7 +70,7 @@
      
 
     <h2>Several fields with same name</h2>
-    <form name="many" method="POST" action="/upload/simupld" id="many" enctype="multipart/form-data">
+    <form name="many" method="POST" action="/cmd/upload/simupld" id="many" enctype="multipart/form-data">
         <div><input type="hidden" name="name" value="boxes"></div>
        <input type="checkbox" id="vehicle1" name="vehicle" value="Bike">
         <label for="vehicle1"> I have a bike</label><br>
